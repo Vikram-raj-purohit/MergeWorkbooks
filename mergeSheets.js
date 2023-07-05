@@ -1,8 +1,3 @@
-const ExcelJS = require('exceljs');
-
-// Rest of the code...
-
-
 async function mergeSheets() {
     const excelFileInput = document.getElementById('excelFileInput');
     const file = excelFileInput.files[0];
@@ -12,32 +7,42 @@ async function mergeSheets() {
       return;
     }
   
-    // Load the workbook
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.readFile(file);
+    const reader = new FileReader();
   
-    // Create a new workbook for the merged sheets
-    const mergedWorkbook = new ExcelJS.Workbook();
-    const mergedSheet = mergedWorkbook.addWorksheet('Merged Sheet');
+    reader.onload = function (e) {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
   
-    // Loop through each sheet in the original workbook
-    workbook.eachSheet((worksheet, sheetId) => {
-      // Copy the sheet data to the merged sheet
-      worksheet.eachRow((row, rowNumber) => {
-        const rowData = row.values;
-        mergedSheet.addRow(rowData);
+      const mergedWorkbook = XLSX.utils.book_new();
+      const mergedSheet = XLSX.utils.aoa_to_sheet([]);
+  
+      workbook.SheetNames.forEach((sheetName) => {
+        const worksheet = workbook.Sheets[sheetName];
+        const sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        XLSX.utils.sheet_add_json(mergedSheet, sheetData, { skipHeader: true, origin: -1 });
       });
-    });
   
-    // Save the merged workbook to a new file
-    const outputFilePath = 'merged.xlsx';
-    await mergedWorkbook.xlsx.writeFile(outputFilePath);
-    console.log(`Merged sheets saved to ${outputFilePath}`);
+      XLSX.utils.book_append_sheet(mergedWorkbook, mergedSheet, 'Merged Sheet');
   
-    // Provide download link to the user
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(new Blob([await mergedWorkbook.xlsx.writeBuffer()], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-    downloadLink.download = 'merged.xlsx';
-    downloadLink.click();
+      const outputFilePath = 'merged.xlsx';
+      XLSX.writeFile(mergedWorkbook, outputFilePath);
+  
+      console.log(`Merged sheets saved to ${outputFilePath}`);
+  
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(new Blob([s2ab(XLSX.write(mergedWorkbook, { bookType: 'xlsx', type: 'binary' }))], { type: 'application/octet-stream' }));
+      downloadLink.download = 'merged.xlsx';
+      downloadLink.click();
+    };
+  
+    reader.readAsArrayBuffer(file);
+  }
+  
+  // Utility function to convert string to ArrayBuffer
+  function s2ab(s) {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+    return buf;
   }
   
