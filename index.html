@@ -4,15 +4,23 @@
     <title>Example</title>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="mergeSheets.js"></script>
+    <script src="mergeExcels.js"></script>
     <link rel="stylesheet" href="Style.css">
   </head>
   <body>
     <!-- Rest of your HTML code -->
-    <div class="Mergeworkbooks"><h3>Here You can merge multiple worksheets into one worksheet</h3>
+    <div class="Mergeworkbooks"><h1>Here You can merge multiple worksheets into one worksheet.</h1>
     <div>
         <input type="file" id="excelFileInput">
     <button onclick="mergeSheets()">Merge Workbooks</button>
     </div>
+</div>
+<div class="Mergeworkbooks">
+    <h1>Here You can merge multiple Excel files into one Excel.</h1>
+    <div>
+  <input type="file" id="excelFiles" multiple>
+  <button id="mergeBtn">Merge Files</button>
+</div>
 </div>
   </body>
 </html>
