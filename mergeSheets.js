@@ -1,11 +1,4 @@
-const fs = require("fs");
-const data = fs.readFileSync("Jyoti.html", "utf-8");
 
-const express = require("express");
-const server = express();
-server.listen(4000);
-
-console.log("Hello");
 
 async function mergeSheets() {
   const excelFileInput = document.getElementById("excelFileInput");
