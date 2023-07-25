@@ -36,13 +36,7 @@ async function mergeSheets() {
     };
 
     reader.readAsArrayBuffer(file);
-  const excelFileInput = document.getElementById('excelFileInput');
-  const file = excelFileInput.files[0];
-
-  if (!file) {
-    alert('Please select an Excel file');
-    return;
-  }
+ 
 
   // Utility function to convert string to ArrayBuffer
   function s2ab(s) {
